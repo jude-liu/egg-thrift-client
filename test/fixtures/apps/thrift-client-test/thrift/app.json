@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+      "name": "singleService",
+      "script": "./test/fixtures/apps/thrift-client-test/thrift/server/singleService.js"
+    },
+    {
+      "name": "multiService",
+      "script": "./test/fixtures/apps/thrift-client-test/thrift/server/multiService.js"
+    }
+  ]
+}

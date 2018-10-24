@@ -29,17 +29,19 @@
   },
   "scripts": {
     "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
-    "test-local": "egg-bin test",
+    "test-local": "egg-bin test --full-trace",
+    "test-local-powershell": "@powershell -Command $env:DEBUG='common-bin';egg-bin test --full-trace",
     "cov": "egg-bin cov",
     "lint": "eslint .",
     "ci": "egg-bin pkgfiles --check && npm run lint && npm run cov",
     "pkgfiles": "egg-bin pkgfiles",
-    "autod": "autod"
+    "autod": "autod",
+    "thrift-server": "pm2 start ./test/fixtures/apps/thrift-client-test/thrift/app.json",
+    "gen": "thrift --gen js:node -o ./test/fixtures/apps/thrift-client-test/thrift ./test/fixtures/apps/thrift-client-test/thrift/test.thrift"
   },
   "files": [
-    "app.js",
-    "agent.js",
-    "config"
+    "config",
+    "app.js"
   ],
   "ci": {
     "version": "8, 9"

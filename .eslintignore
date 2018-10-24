@@ -1,1 +1,3 @@
 coverage
+test/fixtures/apps/thrift-client-test/thrift/gen-nodejs/*.js
+test/fixtures/apps/thrift-client-test/thrift/server/*.js

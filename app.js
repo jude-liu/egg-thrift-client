@@ -4,46 +4,46 @@ const path = require('path');
 const thrift = require('thrift');
 
 module.exports = app => {
-	app.thriftClient = {
-		clients: {},
-		get: function(clientName) {
-			return this.clients[clientName];
-		}
-	};
-	
-	init(app.config.thrift);
+  app.thriftClient = {
+    clients: {},
+    get(clientName) {
+      return this.clients[clientName];
+    },
+  };
 
-	function init(clients) {
-		if (!clients || typeof clients !== 'object') throw new Error('Thrift client config is missing.');
+  init(app.config.thriftClient);
 
-		for (let key in clients) {
-			if (!Array.isArray(clients[key].serviceClient)) {
-				createClient(clients[key]);
-			} else {
-				createMultiplexer(clients[key]);
-			}
-		}
-	}
+  function init(clients) {
+    if (!clients || typeof clients !== 'object') throw new Error('Thrift client config is missing.');
 
-	function createClient(clientConf) {
-		let conn = thrift.createConnection(clientConf.host, clientConf.port);
-		let serviceClient = require(path.join(app.config.baseDir, clientConf.serviceClient.path));
-		let client = thrift.createClient(serviceClient, conn);
-		app.thriftClient.clients[clientConf.serviceClient.name] = client;
-	}
+    for (const key in clients) {
+      if (!Array.isArray(clients[key].serviceClient)) {
+        createClient(clients[key]);
+      } else {
+        createMultiplexer(clients[key]);
+      }
+    }
+  }
 
-	function createMultiplexer(clientConf) {
-		let mulit = new thrift.Multiplexer();
-		let conn = thrift.createConnection(clientConf.host, clientConf.port,  {
-			transport: thrift.TBufferedTransport,
-			protocol: thrift.TBinaryProtocol,
-		});
+  function createClient(clientConf) {
+    const conn = thrift.createConnection(clientConf.host, clientConf.port);
+    const serviceClient = require(path.join(app.config.baseDir, clientConf.serviceClient.path));
+    const client = thrift.createClient(serviceClient, conn);
+    app.thriftClient.clients[clientConf.serviceClient.name] = client;
+  }
 
-		for (let sc of clientConf.serviceClient) {
-			let serviceClinetPath = path.join(app.config.baseDir, sc.path);
-			let client = mulit.createClient(sc.name, require(serviceClinetPath), conn);
-			app.thriftClient.clients[sc.name] = client;
-		}
-	}
+  function createMultiplexer(clientConf) {
+    const mulit = new thrift.Multiplexer();
+    const conn = thrift.createConnection(clientConf.host, clientConf.port, {
+      transport: thrift.TBufferedTransport,
+      protocol: thrift.TBinaryProtocol,
+    });
+
+    for (const sc of clientConf.serviceClient) {
+      const serviceClinetPath = path.join(app.config.baseDir, sc.path);
+      const client = mulit.createClient(sc.name, require(serviceClinetPath), conn);
+      app.thriftClient.clients[sc.name] = client;
+    }
+  }
 
 };
